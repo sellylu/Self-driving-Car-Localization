@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="num" default="1" />
+  <arg name="node_start_delay" default="20" />
+  <param name="file_num" type="int" value="$(arg num)"/>
+  <node pkg="localization" type="localization_node" name="localization_node" output="screen" required="true" cwd="node"/>
+
+  <node pkg="gps_transformer" type="gps_transformer_node" name="gps_transformer_node" output="screen" clear_params="true" required="true"/>
+
+  <node pkg="rosbag" type="play" name="play" args="$(find localization)/data/bag/localization_$(arg num).bag -r 0.3 -q --clock" output="screen"  launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find localization)/localization.rviz"/>
+</launch>
